@@ -1,6 +1,11 @@
 # import pandas lib as pd
 import pandas as pd
 import re
+import datetime
+
+def days_in_month(date):
+    mm, yyyy = map(int, date.split('/'))
+    return (datetime.date(yyyy, (mm)+1, 1) - datetime.date(yyyy, mm, 1)).days
 
 # read by default 1st sheet of an excel file
 df = pd.read_excel('file.xls')
@@ -21,8 +26,8 @@ for i in range(0, len(info)):
             statement_date = i
 
 statement_date_from, statement_date_to = re.findall(r'\d{2}/\d{2}/\d{4}', statement_date)
-
-print(statement_date_from, statement_date_to)
+statement_month = re.findall(r'\d{2}/\d{4}', statement_date)[0]
+print(statement_date_from, statement_date_to, statement_month)
 # print(information)
 
 
@@ -37,7 +42,13 @@ df.columns = df.iloc[0]
 df = df[2:]
 
 # print(df.columns)
-# print(df.head())
+print(df.head())
+
+
+
+# get no. of the days in the month of mm-yyyy
+days = days_in_month(statement_month)
+print(days)
 
 
 

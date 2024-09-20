@@ -3,14 +3,11 @@ import pandas as pd
 import re
 import datetime
 
-amb_limit = 10000
+amb_limit = 20000
 
 def days_in_month(date):
     mm, yyyy = map(int, date.split('/'))
     return (datetime.date(yyyy, (mm)+1, 1) - datetime.date(yyyy, mm, 1)).days
-
-# read by default 1st sheet of an excel file
-df = pd.read_excel('new.xls')
 
 def def_statement_date(df):
     # get the row 5 to 18
@@ -35,8 +32,11 @@ def def_statement_date(df):
 
     return statement_month, statement_date_from, statement_date_to
 
-statement_month, statement_date_from, statement_date_to = def_statement_date(df)
+# read by default 1st sheet of an excel file
+df = pd.read_excel('new.xls')
 
+# get stuff
+statement_month, statement_date_from, statement_date_to = def_statement_date(df)
 days = days_in_month(statement_month)
 
 # remove the summary and set the columns

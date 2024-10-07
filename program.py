@@ -3,7 +3,8 @@ import pandas as pd
 import re
 import datetime
 
-amb_limit = 20000
+amb_limit = 5000
+file_name = 'file.xls'
 
 def days_in_month(date):
     mm, yyyy = map(int, date.split('/'))
@@ -33,16 +34,27 @@ def def_statement_date(df):
     return statement_month, statement_date_from, statement_date_to
 
 # read by default 1st sheet of an excel file
-df = pd.read_excel('new.xls')
+df = pd.read_excel(file_name)
 
 # get stuff
 statement_month, statement_date_from, statement_date_to = def_statement_date(df)
 days = days_in_month(statement_month)
 
+
+
+
 # remove the summary and set the columns
 df = df.iloc[19:]
 df.columns = df.iloc[0]
 df = df[2:]
+
+# get the opening balance
+# iterate through the rows till "opening balance" is found
+opening_balance = None
+for i in range(len(df)):
+    if type(df.iloc[i][0]) == str and df.iloc[i][0].startswith('Opening Balance'):
+        opening_balance = df.iloc[i+1][0]
+
 
 closing_balances ={}
 
@@ -58,11 +70,16 @@ for i in range(len(df)):
 
 # get the closing balances of all days and the total
 total = 0
+
 for i in range(1, statement_date_to):
     if i not in closing_balances:
-        closing_balances[i] = closing_balances[i-1]
+        if i == 1:
+            closing_balances[i] = opening_balance
+        else:
+            closing_balances[i] = closing_balances[i-1]
 
     total += closing_balances[i]
+
 
 
 total_amb = amb_limit * days

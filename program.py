@@ -38,6 +38,13 @@ def def_statement_date(df):
     return statement_month, statement_date_from, statement_date_to
 
 
+def print_closing_balance():
+    print("\n", "--  Closing Balances  --", "\n")
+    temp = 0
+    for i in range(1, statement_date_to+1):
+        temp += closing_balances[i]
+        print(f"Day {i}: {closing_balances[i]}, AMB: {temp/i:2f}")
+
 # read by default 1st sheet of an excel file
 df = pd.read_excel(file_name)
 
@@ -74,7 +81,7 @@ for i in range(len(df)):
 # get the closing balances of all days and the total
 total = 0
 
-for i in range(1, statement_date_to):
+for i in range(1, statement_date_to+1):
     if i not in closing_balances:
         if i == 1:
             closing_balances[i] = opening_balance
@@ -82,8 +89,9 @@ for i in range(1, statement_date_to):
             closing_balances[i] = closing_balances[i - 1]
 
     total += closing_balances[i]
-
-
+    
+    
+# calculate the total amount to maintain AMB
 total_amb = amb_limit * days
 current_amb = total / statement_date_to
 
@@ -134,3 +142,4 @@ else:
         "per day to maintain AMB",
         "(" + str(days_left) + " days)",
     )
+print_closing_balance()
